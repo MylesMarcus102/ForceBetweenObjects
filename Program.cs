@@ -53,7 +53,7 @@
     {
             double Distance = Math.Sqrt((x-x2)*(x-x2)+(y-y2)*(y-y2)+(z-z2)*(z-z2));
             double force = (mass2 * mass*G)/Math.Pow(Distance,2);
-            Console.WriteLine($"Your objects will accelerate at {force} newtons.");
+            Console.WriteLine($"Your objects are pulling each other at {force} newtons.");
     }
 }
 
