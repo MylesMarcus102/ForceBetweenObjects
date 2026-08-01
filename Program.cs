@@ -36,30 +36,35 @@ public class ForceCalculator
             Object2.Setup();
         }
 
+        double force = 1;
         double DTStep = 0;
-        double DX1;
-        double DX2;
-        double DY1;
-        double DY2;
+        double DY=100;
+        double DX=100;
         double DT = 0.01;
         double VelocityX1 = 0;
         double VelocityX2 = 0;
         double VelocityY1 = 0;
         double VelocityY2 = 0;
+        double Distance = Math.Sqrt(DY*DY+DX*DX);
         Console.WriteLine("");
-        while (Object1.Position != Object2.Position)
+        while (Distance > 0.1)
         {
-            double Distance = Math.Sqrt((Object1.x-Object2.x)*(Object1.x-Object2.x)+(Object1.y-Object2.y)*(Object1.y-Object2.y));
-            DY1 = (Object2.y - Object1.y);
-            DY2 = (Object1.y - Object2.y);
-            DX1 = (Object2.x - Object1.x);
-            DX2 = (Object1.x - Object2.x);
-            double force = (Object1.mass * Object2.mass*G)/Math.Pow(Distance,2);
-            double AccelerationX1 = force/Object1.mass*(DX1/Distance);
-            double AccelerationX2 = (force/Object2.mass)*(DX2/Distance);
-            double AccelerationY1 = force/Object1.mass*(DY1/Distance);
-            double AccelerationY2 = (force/Object2.mass)*(DY2/Distance);
-            Console.Write($"\r Object1({Object1.Position.x} meters,{Object1.Position.y} meters) Object2({Object2.Position.x} meters,{Object2.Position.y} meters) Time:{DTStep} seconds. Your objects are pulling each other at {force} newtons.");
+            if (force >= 1e300)
+            {
+                break;
+            }
+            DX = (Object2.x - Object1.x);
+            DY = (Object2.y - Object1.y);
+            Distance = Math.Sqrt(DX*DX + DY*DY);
+            if (Distance < 5)
+            {
+                DT = 0.0001;
+            }
+            force = (Object1.mass * Object2.mass*G)/Math.Pow(Distance,2);
+            double AccelerationX1 = force/Object1.mass*(DX/Distance);
+            double AccelerationX2 = (force/Object2.mass)*(-DX/Distance);
+            double AccelerationY1 = force/Object1.mass*(DY/Distance);
+            double AccelerationY2 = (force/Object2.mass)*(-DY/Distance);
             VelocityX1 += AccelerationX1*DT;
             VelocityX2 += AccelerationX2*DT;
             VelocityY1 += AccelerationY1*DT;
@@ -70,6 +75,7 @@ public class ForceCalculator
             Object2.y += VelocityY2*DT;
             Object1.Position = (Object1.x,Object1.y);
             Object2.Position = (Object2.x,Object2.y);
+            Console.Write($"\r Object1 Position: ({Object1.x} meters,{Object1.y} meters) Object2 Position: ({Object2.x} meters,{Object2.y} meters) Time passed: {DTStep} seconds, force: {force} newtons. ");
             DTStep += DT;
             System.Threading.Thread.Sleep(10);
         }
@@ -81,6 +87,7 @@ public class ForceCalculator
 {
     public static void Main()
     {
+        
         ForceCalculator Force = new ForceCalculator();
         Force.ForceMath();
     }
